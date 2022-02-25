@@ -45,8 +45,19 @@ int main(void)
 		form = formularise();
 		printf("%s\n", form);
 	}
+	form = formularise();
+	printf("%s\n", form);
 
-	while (1)
+	data = calculate(form);
+	for (ct1 = 0; data[ct1][0] != NULL; ct1++)
+	{
+		for (ct2 = 0; data[ct1][ct2] != NULL; ct2++)
+		{
+			printf("%s ", data[ct1][ct2]);
+		}
+		printf("\n");
+	}
+	while (0)
 	{
 		data = dataget();
 		for (ct1 = 0; data[ct1][0] != NULL; ct1++)
@@ -62,7 +73,7 @@ int main(void)
 }
 char*** addtion(char*** formula1, char*** formula2, int code)
 {
-	char*** tentative, *** result;
+	char*** tentative, *** result, copy[16];
 	int row,column,many;
 	int mater;
 	int ctr,ctc;
@@ -79,15 +90,20 @@ char*** addtion(char*** formula1, char*** formula2, int code)
 		for (ctc = 0; ctc < column; ctc++)
 		{
 			mater =
-				atoi(formula1[ctr][ctr]) + atoi(formula2[ctr][ctr]) * code;
+				atoi(formula1[ctr][ctc]) + atoi(formula2[ctr][ctc]) * code;
+			snprintf(copy, sizeof(copy), "%d", result);
+			strcpy(result[ctr][ctc], copy);
 		}
 	}
+	result[ctr] = (char**)malloc(sizeof(char*));
+	result[ctr] = NULL;
+
 	return result;
 }
 //　１つめの行列のrow 　　２つ目の行列のcolumn　
 char*** production(char*** formula1, char*** formula2)
 {
-	char*** tentative1, *** tentative2,***result;
+	char*** tentative1, *** tentative2,***result,copy[16];
 	int row, column,same;
 	int mater;
 	int ctr1, ctc1,ct;
@@ -110,11 +126,14 @@ char*** production(char*** formula1, char*** formula2)
 			{
 				result +=
 					atoi(formula1[ctr1][ct]) * atoi(formula2[ct][ctc1]);
+				snprintf(copy , sizeof(copy) , "%d", result);
+				strcpy(result[ctr1][ctc1], copy);
 			}
 		}
 		result[ctr1][ctc1] = NULL;
 	}
-	result[ctr1][0] = NULL;
+	result[ctr1] = (char**)malloc(sizeof(char*));
+	result[ctr1] = NULL;
 
 	return result;
 }
@@ -518,7 +537,7 @@ char*** calculate(char* form)
 	{
 		char* name;
 		char*** result;
-		int** mater;
+		//int** mater;
 		STUCK* next;
 		STUCK* before;
 	};
@@ -532,7 +551,7 @@ char*** calculate(char* form)
 		if( (('a' <= *current) && ('z' <= *current))||
 			(('A' <= *current) && ('Z' <= *current)) )
 		{
-			*stuck->name = *current;
+			//*(stuck->name) = *current;
 			data1 = dataget();
 			stuck->result = data1;
 			stuck->next = (STUCK*)malloc(sizeof(STUCK));
@@ -547,21 +566,24 @@ char*** calculate(char* form)
 			switch (*current)
 			{
 				case '+':
-					
+					stuck->before->result = addtion(data1, data2, 1);
 					break;
 				case '-':
-
+					stuck->before->result = addtion(data1, data2, -1);
 					break;
 				case '*':
-
+					stuck->before->result = production(data1, data2);
 					break;
 
 				default:
 
 					break;
 			}
+			stuck = stuck->before;
+			free(stuck->next);
 		}
+		stuck->next = NULL;
 	}
 
-	return NULL;
+	return head->result;
 }
