@@ -120,7 +120,7 @@ char*** production(char*** formula1, char*** formula2)
 }
 char*** dataget()
 {
-	char sequence[400], * sepa,***data;
+	char sequence[400], * sepa,***data; 
 	char* alter;
 	int row, culct, ct, ct2;
 
