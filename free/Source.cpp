@@ -42,6 +42,7 @@ int main(void)
 	int ct1, ct2;
 	while (0)
 	{
+		printf("Type  a form\n" );
 		form = formularise();
 		printf("%s\n", form);
 	}
@@ -325,6 +326,7 @@ char* formularise()
 	char *alter,change,* tail;
 	int length;
 	sequence = (char*)malloc(sizeof(char) * 301);
+	printf("Please enter queue!!\n");
 	fgets(sequence, 300, stdin);
 	sequence = eliminate(sequence, ' ');
 	length = strlen(sequence);
@@ -555,12 +557,12 @@ char*** calculate(char* form)
 			data1 = dataget();
 			stuck->result = data1;
 			stuck->next = (STUCK*)malloc(sizeof(STUCK));
-			tentative = stuck;
+			stuck->next->before = stuck;
 			stuck = stuck->next;
-			stuck->before = tentative;
 		}
 		else
 		{
+			stuck = stuck->before;
 			data1 = stuck->before->result;
 			data2 = stuck->result;
 			switch (*current)
@@ -579,8 +581,10 @@ char*** calculate(char* form)
 
 					break;
 			}
-			stuck = stuck->before;
-			free(stuck->next);
+			stuck->before->next = stuck->next;
+			stuck->next->before = stuck->before->next;
+
+			free(stuck);
 		}
 		stuck->next = NULL;
 	}
