@@ -42,7 +42,7 @@ int main(void)
 	int ct1, ct2;
 	while (0)
 	{
-		printf("Type  a form\n" );
+		printf("Type a form\n" );
 		form = formularise();
 		printf("%s\n", form);
 	}
@@ -176,6 +176,7 @@ char*** dataget()
 	row = 1;
 	while (1)
 	{
+
 		fgets(sequence, 300, stdin);
 		//　endコマンドで入力終了
 		if (strcmp(sequence, "\n") == 0)
@@ -547,44 +548,54 @@ char*** calculate(char* form)
 	length = strlen(form);
 	stuck = (STUCK*)malloc(sizeof(STUCK));
 	head = stuck;
-	head->before = NULL;
+	stuck->before = NULL;
 	for (current = form; *current != '\0'; current++)
 	{
 		if( (('a' <= *current) && ('z' <= *current))||
 			(('A' <= *current) && ('Z' <= *current)) )
 		{
 			//*(stuck->name) = *current;
+			printf("Type a data\n");
 			data1 = dataget();
 			stuck->result = data1;
 			stuck->next = (STUCK*)malloc(sizeof(STUCK));
-			stuck->next->before = stuck;
+			tentative = stuck;
 			stuck = stuck->next;
+			stuck->before = tentative;
 		}
-		else
+		else if( *current == '+'|| *current == '-' || *current == '*' )
 		{
 			stuck = stuck->before;
-			data1 = stuck->before->result;
 			data2 = stuck->result;
+
+			stuck = stuck->before;
+			data1 = stuck->result;
 			switch (*current)
 			{
 				case '+':
-					stuck->before->result = addtion(data1, data2, 1);
+					stuck->result = addtion(data1, data2, 1);
 					break;
 				case '-':
-					stuck->before->result = addtion(data1, data2, -1);
+					stuck->result = addtion(data1, data2, -1);
 					break;
 				case '*':
-					stuck->before->result = production(data1, data2);
+					stuck->result = production(data1, data2);
 					break;
 
 				default:
 
 					break;
 			}
-			stuck->before->next = stuck->next;
-			stuck->next->before = stuck->before->next;
+			tentative = stuck->next;
+			tentative = tentative->next;
+			free(stuck->next);
+			stuck->next = tentative;
+			tentative->before = stuck;
 
-			free(stuck);
+		}
+		else
+		{
+
 		}
 		stuck->next = NULL;
 	}
