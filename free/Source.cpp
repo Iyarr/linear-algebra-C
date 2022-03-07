@@ -2,8 +2,11 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<math.h>
 // ct+1番目の指定した文字列の先頭アドレスを返す
 char* split(char* subject, char* devide, int ct);
+// 数値を文字列に変換
+char* tostring(int number);
 //　文字列検索
 char* search(char* subject, char* devide);
 //　文字数検索
@@ -82,22 +85,24 @@ char*** addtion(char*** formula1, char*** formula2, int code)
 	many = 0;
 	for (row = 0; formula1[row][0] != NULL; row++);
 	for (column = 0; formula1[0][column] != NULL; column++);
+	row++;
+	column++;
 
 	result = (char***)malloc(sizeof(char*)* row* column);
-	row--;
-	column--;
 	for (ctr = 0; ctr < row; ctr++)
 	{
+		result[ctr] = (char**)malloc(sizeof(char*) * column);
 		for (ctc = 0; ctc < column; ctc++)
 		{
 			mater =
 				atoi(formula1[ctr][ctc]) + atoi(formula2[ctr][ctc]) * code;
-			snprintf(copy, sizeof(copy), "%d", result);
-			strcpy(result[ctr][ctc], copy);
+			result[ctr][ctc] = tostring(mater);
+			//strcpy(result[ctr][ctc], copy);
 		}
+		result[ctr][column] = NULL;
 	}
-	result[ctr] = (char**)malloc(sizeof(char*));
-	result[ctr] = NULL;
+	result[row] = (char**)malloc(sizeof(char*));
+	result[row][0] = NULL;
 
 	return result;
 }
@@ -601,4 +606,27 @@ char*** calculate(char* form)
 	}
 
 	return head->result;
+}
+char* tostring(int number)
+{
+	char* string, * head;
+	int ct, ct1, num;
+	ct = int(log10(double(number))) + 2;
+	string = (char*)malloc(sizeof(char) * ct);
+	head = string;
+	if (number < 0)
+	{
+		number = -number;
+		*string = '-';
+		string++;
+	}
+	for (ct1 = ct - 2; ct1 >= 0; ct1--)
+	{
+		num = int(pow(10.0, double(ct1)));
+		*string = number / int(pow(10.0, double(ct1))) + '0';
+		number %= int(pow(10.0, double(ct1)));
+		string++;
+	}
+	*string = '\0';
+	return head;
 }
