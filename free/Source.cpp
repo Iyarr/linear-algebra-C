@@ -53,7 +53,8 @@ int main(void)
 	printf("%s\n", form);
 
 	data = calculate(form);
-	for (ct1 = 0; data[ct1][0] != NULL; ct1++)
+
+	for (ct1 = 0; data[ct1] != NULL; ct1++)
 	{
 		for (ct2 = 0; data[ct1][ct2] != NULL; ct2++)
 		{
@@ -77,7 +78,7 @@ int main(void)
 }
 char*** addtion(char*** formula1, char*** formula2, int code)
 {
-	char*** tentative, *** result, copy[16];
+	char*** tentative, *** result;
 	int row,column,many;
 	int mater;
 	int ctr,ctc;
@@ -85,13 +86,11 @@ char*** addtion(char*** formula1, char*** formula2, int code)
 	many = 0;
 	for (row = 0; formula1[row][0] != NULL; row++);
 	for (column = 0; formula1[0][column] != NULL; column++);
-	row++;
-	column++;
 
-	result = (char***)malloc(sizeof(char*)* row* column);
+	result = (char***)malloc(sizeof(char*)* (row+1)* (column + 1));
 	for (ctr = 0; ctr < row; ctr++)
 	{
-		result[ctr] = (char**)malloc(sizeof(char*) * column);
+		result[ctr] = (char**)malloc(sizeof(char*) * (column + 1));
 		for (ctc = 0; ctc < column; ctc++)
 		{
 			mater =
@@ -101,15 +100,14 @@ char*** addtion(char*** formula1, char*** formula2, int code)
 		}
 		result[ctr][column] = NULL;
 	}
-	result[row] = (char**)malloc(sizeof(char*));
-	result[row][0] = NULL;
+	result[row] = NULL;
 
 	return result;
 }
 //　１つめの行列のrow 　　２つ目の行列のcolumn　
 char*** production(char*** formula1, char*** formula2)
 {
-	char*** tentative1, *** tentative2,***result,copy[16];
+	char*** tentative1, *** tentative2,***result;
 	int row, column,same;
 	int mater;
 	int ctr1, ctc1,ct;
@@ -118,27 +116,25 @@ char*** production(char*** formula1, char*** formula2)
 
 	for (same = 0; tentative1[0][same] != NULL; same++);
 	for (row = 0; tentative1[row][0] != NULL; row++);
-
 	for (column = 0; tentative2[0][column] != NULL; column++);
 
-	result = (char***)malloc(sizeof(char*) * row* column);
+	result = (char***)malloc(sizeof(char*) * (row + 1) * (column + 1));
 	for (ctr1 = 0; ctr1 < row; ctr1++)
 	{
-		result[ctr1] = (char**)malloc(sizeof(char*) * column);
+		result[ctr1] = (char**)malloc(sizeof(char*) * (column + 1));
 		for (ctc1 = 0; ctc1 < column; ctc1++)
 		{
-			result = 0;
+			mater = 0;
 			for (ct = 0; ct < same; ct++)
 			{
-				result +=
+				mater +=
 					atoi(formula1[ctr1][ct]) * atoi(formula2[ct][ctc1]);
-				snprintf(copy , sizeof(copy) , "%d", result);
-				strcpy(result[ctr1][ctc1], copy);
 			}
+			result[ctr1][ctc1] = tostring(mater);
+
 		}
 		result[ctr1][ctc1] = NULL;
 	}
-	result[ctr1] = (char**)malloc(sizeof(char*));
 	result[ctr1] = NULL;
 
 	return result;
@@ -611,11 +607,12 @@ char* tostring(int number)
 {
 	char* string, * head;
 	int ct, ct1, num;
-	ct = int(log10(double(number))) + 2;
+	ct = int(log10(double(abs(number)))) + 3;
 	string = (char*)malloc(sizeof(char) * ct);
 	head = string;
 	if (number < 0)
 	{
+		string = (char*)malloc(sizeof(char));
 		number = -number;
 		*string = '-';
 		string++;
