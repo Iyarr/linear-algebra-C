@@ -607,16 +607,30 @@ char* tostring(int number)
 {
 	char* string, * head;
 	int ct, ct1, num;
-	ct = int(log10(double(abs(number)))) + 3;
-	string = (char*)malloc(sizeof(char) * ct);
-	head = string;
+	//　マイナスへの対応
 	if (number < 0)
 	{
-		string = (char*)malloc(sizeof(char));
+		ct = int(log10(double(-number))) + 2;
+		string = (char*)malloc(sizeof(char)*ct);
+		head = string;
 		number = -number;
 		*string = '-';
 		string++;
 	}
+	else
+	{
+		if (number == 0)
+		{
+			ct = 2;
+		}
+		else
+		{
+			ct = int(log10(double(number))) + 2;
+		}
+		string = (char*)malloc(sizeof(char) * ct);
+		head = string;
+	}
+
 	for (ct1 = ct - 2; ct1 >= 0; ct1--)
 	{
 		num = int(pow(10.0, double(ct1)));
