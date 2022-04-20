@@ -539,6 +539,7 @@ char*** calculate(char* form)
 	int length;
 	typedef struct STUCK
 	{
+		char mark;
 		char* name;
 		char*** result;
 		//int** mater;
@@ -559,6 +560,7 @@ char*** calculate(char* form)
 			printf("Type a data\n");
 			data1 = dataget();
 			stuck->result = data1;
+			stuck->mark = *current;
 			stuck->next = (STUCK*)malloc(sizeof(STUCK));
 			tentative = stuck;
 			stuck = stuck->next;
